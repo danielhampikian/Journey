@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Journey – daily goal coach</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>🧭 Journey</h1>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="today" role="tab">Today</button>
+      <button class="tab" data-tab="history" role="tab">History</button>
+      <button class="tab" data-tab="progress" role="tab">Progress</button>
+      <button class="tab" data-tab="goals" role="tab">Goals</button>
+    </nav>
+  </header>
+
+  <main>
+    <div id="notice" class="notice hidden" role="status"></div>
+    <div id="review-banner" class="banner hidden"></div>
+
+    <!-- TODAY -->
+    <section id="tab-today" class="panel">
+      <div class="card">
+        <h2 id="today-title">Today</h2>
+        <p class="muted" id="today-subtitle"></p>
+        <div class="row">
+          <button id="start-morning" class="primary">☀️ Start morning check-in</button>
+          <button id="start-evening" class="primary alt">🌙 Start evening check-in</button>
+        </div>
+        <div id="today-goals"></div>
+      </div>
+
+      <div id="conversation" class="card hidden">
+        <div class="row space">
+          <h2 id="conversation-title">Conversation</h2>
+          <label class="toggle"><input type="checkbox" id="voice-replies" checked /> Speak replies aloud</label>
+        </div>
+        <div id="transcript" class="transcript" aria-live="polite"></div>
+        <div class="composer">
+          <button id="mic" class="mic" title="Record your answer">🎤</button>
+          <input id="message" type="text" placeholder="Type or press 🎤 to talk…" autocomplete="off" />
+          <button id="send" class="primary">Send</button>
+        </div>
+        <div class="row space">
+          <span id="status" class="muted"></span>
+          <button id="end" class="secondary">✅ End &amp; summarize</button>
+        </div>
+      </div>
+
+      <div id="summary" class="card hidden"></div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="tab-history" class="panel hidden">
+      <div class="card">
+        <h2>Conversation history</h2>
+        <p class="muted">Your morning plans and evening reflections, day by day.</p>
+      </div>
+      <div id="history-list"></div>
+    </section>
+
+    <!-- PROGRESS -->
+    <section id="tab-progress" class="panel hidden">
+      <div id="motivation" class="card motivation"></div>
+      <div id="stat-tiles" class="tiles"></div>
+      <div class="card">
+        <h2>Daily goal completion – last 14 days</h2>
+        <div id="completion-chart" class="chart"></div>
+        <div class="legend">
+          <span><i class="sw done"></i>Done</span>
+          <span><i class="sw partial"></i>Partial</span>
+          <span><i class="sw missed"></i>Missed</span>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h2>Recurring struggles</h2>
+          <div id="struggles"></div>
+        </div>
+        <div class="card">
+          <h2>Coach suggestions</h2>
+          <div id="insights" class="insights"></div>
+          <button id="refresh-insights" class="secondary">✨ Get fresh suggestions</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GOALS -->
+    <section id="tab-goals" class="panel hidden">
+      <div class="card">
+        <h2>Your goal hierarchy</h2>
+        <p class="muted">Daily goals work best when they ladder up to something bigger. Define or refine each level – your coach will
+          check in when a level is missing or hasn't been reviewed in a while.</p>
+        <form id="goals-form"></form>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
