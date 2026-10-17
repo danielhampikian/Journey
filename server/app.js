@@ -84,7 +84,7 @@ function createApp({ store, ai, now = () => new Date() }) {
       }
       updates[level] = body[level];
     }
-    const goals = store.updateGoals(updates, now());
+    const goals = store.updateGoals(updates, now(), { reviewed: true });
     res.json({ goals, review: goalsNeedingReview(goals, now()) });
   });
 
@@ -125,7 +125,13 @@ function createApp({ store, ai, now = () => new Date() }) {
     if (text.length > MAX_MESSAGE_LENGTH) throw httpError(400, `text must be at most ${MAX_MESSAGE_LENGTH} characters`);
 
     store.addMessage(conversation.id, 'user', text, now());
-    const reply = await ai.chat(chatMessages(conversation));
+    let reply;
+    try {
+      reply = await ai.chat(chatMessages(conversation));
+    } catch (err) {
+      store.removeLastMessage(conversation.id);
+      throw err;
+    }
     store.addMessage(conversation.id, 'assistant', reply, now());
     res.json({ reply, conversation: store.getConversation(conversation.id) });
   });

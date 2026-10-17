@@ -154,3 +154,24 @@ test('insights are generated and stored', () =>
     assert.equal(res.body.text, 'Hello from the coach!');
     assert.equal((await call('GET', '/api/insights')).body.text, 'Hello from the coach!');
   }));
+
+test('re-saving unchanged goals marks them as reviewed', () =>
+  withServer(async ({ call, store }) => {
+    store.updateGoals({ weekly: 'Run 3x' }, new Date('2020-01-01T00:00:00Z'));
+    const res = await call('PUT', '/api/goals', { weekly: 'Run 3x ' });
+    assert.notEqual(res.body.goals.weekly.updatedAt, '2020-01-01T00:00:00.000Z');
+    assert.ok(!res.body.review.some((r) => r.level === 'weekly'));
+  }));
+
+test('a failed AI reply does not leave an orphaned user message', () => {
+  const ai = fakeAi();
+  return withServer(async ({ call }) => {
+    const c = await call('POST', '/api/conversations', { type: 'morning' });
+    ai.chat = async () => {
+      throw Object.assign(new Error('upstream down'), { status: 502 });
+    };
+    const res = await call('POST', `/api/conversations/${c.body.id}/messages`, { text: 'hi' });
+    assert.equal(res.status, 502);
+    assert.equal((await call('GET', `/api/conversations/${c.body.id}`)).body.messages.length, 1);
+  }, ai);
+});

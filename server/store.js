@@ -40,10 +40,16 @@ class Store {
     return this.data.goals;
   }
 
-  updateGoals(updates, now = new Date()) {
+  /**
+   * Updates goal levels. With `reviewed: true` (an explicit save by the user)
+   * every provided level counts as reviewed even if its text is unchanged.
+   */
+  updateGoals(updates, now = new Date(), { reviewed = false } = {}) {
     for (const level of GOAL_LEVELS) {
-      if (typeof updates[level] === 'string' && updates[level] !== this.data.goals[level].text) {
-        this.data.goals[level] = { text: updates[level].trim(), updatedAt: now.toISOString() };
+      if (typeof updates[level] !== 'string') continue;
+      const text = updates[level].trim();
+      if (reviewed || text !== this.data.goals[level].text) {
+        this.data.goals[level] = { text, updatedAt: now.toISOString() };
       }
     }
     this.save();
@@ -90,6 +96,14 @@ class Store {
     const conversation = this.getConversation(id);
     if (!conversation) return null;
     Object.assign(conversation, fields);
+    this.save();
+    return conversation;
+  }
+
+  removeLastMessage(id) {
+    const conversation = this.getConversation(id);
+    if (!conversation) return null;
+    conversation.messages.pop();
     this.save();
     return conversation;
   }
